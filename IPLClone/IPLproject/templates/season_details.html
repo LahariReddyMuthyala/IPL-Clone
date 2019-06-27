@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+    .container{
+    border-color:blue;
+    border-width:medium;
+    }
+</style>
+<br>
+<center>
+    <h1>Matches in {{ currentSeason }}</h1>
+    <br>
+    <div class="container" style="width:80%">
+    {% for match in matches %}
+    <div class="box" style="background:whitesmoke;padding:15px">
+          <article class="media">
+                <div class="media-content">
+                      <div class="content">
+                          <section class="section" style="padding-top:0px;padding-bottom:20px;">
+                              <p><strong>{{ match.team1 }} <span style="color:red">v/s</span> {{ match.team2 }}</strong>
+                            <a class="button is-info is-small " href="{% url 'match_details' currentSeason match.id%}" style="float:right">Match Details</a>
+                          <br>
+                          <small>{{ match.venue }}, {{ match.city }}</small>
+                                  {% if match.type %}
+                                  <br>
+                                  <small><span style="color:red" >{{ match.type }}</span>
+                                  </small>
+                                  {% endif %}
+                              </p>
+                          </section>
+                          <section class="section" style="padding-top:5px;padding-bottom:0px;border-top:solid;border-color:grey;">
+                              <p style="float:left;margin-bottom:0;"><strong>{{ match.toss_winner }}</strong> won the toss and chose to <strong>{{ match.toss_decision }}</strong></p>
+                                <p style="float:right;margin-bottom:0;"><strong>Player of the match : </strong>{{ match.player_of_match }}</p>
+                          </section>
+                      </div>
+                </div>
+          </article>
+    </div>
+        {% endfor %}
+        <div class="container is-centered">
+        <nav class="pagination-color-grey is-centered" role="navigation" aria-label="pagination" style="color:grey">
+            <span class="step-links">
+                {% if matches.has_previous %}
+                    <a class="pagination-link" href="?page=1" style="color:white">&laquo; 1</a>
+                        <span class="pagination-ellipsis" style="color:white">&hellip;</span>
+                    <a class="pagination-previous" href="?page={{ matches.previous_page_number }}" style="color:white">Previous</a>
+                {% endif %}
+
+                <span class="current pagination-link is-current">
+                     {{ matches.number }}
+                </span>
+
+                {% if matches.has_next %}
+                    <a class="pagination-next" href="?page={{ matches.next_page_number }}" style="color:white">Next</a>
+                    <span class="pagination-ellipsis" style="color:white">&hellip;</span>
+                    <a class="pagination-link" href="?page={{ matches.paginator.num_pages }}" style="color:white">{{ matches.paginator.num_pages }} &raquo;</a>
+                {% endif %}
+            </span>
+        </nav>
+        </div>
+
+    </div>
+</center>
+
+
+{% endblock content %}

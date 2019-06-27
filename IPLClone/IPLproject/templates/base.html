@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bulma.css' %}">
+    <style>
+        html{
+        background-color:black;
+        }
+        h1{
+            color:white;
+            font-size:20px;
+            font-weight:bold;
+        }
+
+    </style>
+</head>
+<body style="background-color:black">
+<div style="border-top: solid;border-color: grey;">
+<nav class="navbar is-black" role="navigation" aria-label="main navigation" >
+
+    <div class="navbar-brand">
+                  <div class="navbar-item" >
+                        <div class="buttons">
+                                  <a class="button is-black is-inverted" href="{% url 'season_details' %}" style="background:white">
+                                     <img src="/static/images/logo.png"/>
+                                  </a>
+                        </div>
+              </div>
+    </div>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">
+              <strong style="color:white">Season</strong>
+            </a>
+            <div class="navbar-dropdown" >
+            {% for season in seasons %}
+                <a href="{% url 'season_details' season.season %}" class="dropdown-item">
+                    {{ season.season }}
+                </a>
+            {% endfor %}
+            </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link is-inverted is-outlined">
+                <strong style="color:white">Points Table</strong>
+            </a>
+            <div class="navbar-dropdown" >
+                {% for season in seasons %}
+                      <a href="{% url 'points_table' season.season %}" class="dropdown-item">
+                            {{ season.season }}
+                      </a>
+                {% endfor %}
+            </div>
+      </div>
+             <div class="navbar-end">
+                  <div class="navbar-item" >
+                        <div class="buttons" >
+                            {% if logged_in == False %}
+                                  <a class="button is-black is-inverted" href="{% url 'signup' %}">
+                                        <strong>Sign up</strong>
+                                  </a>
+                                  <a class="button is-black is-inverted" href="{% url 'login' %}">
+                                        <strong>Log in</strong>
+                                  </a>
+                            {% endif %}
+                        </div>
+              </div>
+             {% if logged_in == True %}
+                    <div class="navbar-item has-dropdown is-hoverable">
+                        <a class="navbar-link is-inverted is-outlined">
+                            {{ username|capfirst }}
+                        </a>
+                    <div class="navbar-dropdown">
+                        <a href="{% url 'logout' %}" class="dropdown-item">
+                            Logout
+                        </a>
+                    </div>
+                    </div>
+             {% endif %}
+            </div>
+</nav>
+</div>
+{% if teams %}
+<div style="background:whitesmoke;border-top: solid;border-color: grey;">
+    <div class="tabs is-centered is-large is-fullwidth">
+        <ul>
+        {% for team in teams %}
+            <li>
+            <a class="image is-96x96 is-hoverable" href="{% url 'team_page' team.team %}">
+                <img src="{{ team.team_logo }}"  />
+            </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% block content %}
+{% endblock content %}
+</body>
+</html>

@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% block content %}
+<script>
+    function display(inning, element){
+        var tabcontent, i, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablink");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace("is-active", "");
+        }
+        tabtexts = document.getElementsByClassName("tabtext");
+        for (i = 0; i < tabtexts.length; i++) {
+            tabtexts[i].style.color = 'white';
+        }
+
+        document.getElementById("tabtext-"+inning).style.color='black';
+        document.getElementById("tablink-"+inning).classList.add("is-active");
+        document.getElementById(inning).style.display = "block";
+    }
+</script>
+<br>
+<div style="padding:10px;" class="container is-float">
+    <center>
+        <br>
+        <h1>{{ match.team1 }} <span style="color:red">v/s</span> {{ match.team2 }} - {{ currentSeason }}</h1>
+        <small style="color:white">{{ match.venue }}, {{ match.city }}</small>
+        <br>
+        <br>
+        <br>
+    </center>
+    <div class="tile is-ancestor">
+            <div class="tile is-7 is-vertical is-parent">
+                    <div class="tabs is-centered is-boxed">
+                          <ul>
+                            <li class="tablink is-active" id="tablink-one">
+
+                              <a>
+                                <span class="tabtext" id="tabtext-one" onclick='display("one", this)'>
+                                    {% for inning1 in inning1|slice:"1" %}
+                                        {{ inning1.batting_team }}
+                                    {% endfor %}
+                                </span>
+                              </a>
+                            </li>
+                            <li class="tablink" id="tablink-two">
+                              <a>
+                                <span class="tabtext" id="tabtext-two" onclick='display("two", this)' style="color:white">
+                                    {% for inning2 in inning2|slice:"1" %}
+                                        {{ inning2.batting_team }}
+                                    {% endfor %}
+                                </span>
+                              </a>
+                            </li>
+                          </ul>
+                    </div>
+                        <div id="one" class="tabcontent" style="display:block">
+                            <div class="container box">
+                                <table class = "table is-hoverable is-striped is-fullwidth">
+                                    <tbody>
+                                    {% load mathfilters %}
+                                    {% for inning in inning1 %}
+                                        <tr>
+                                            <td>
+                                                {% if inning.wide_runs != 0 or inning.noball_runs != 0 %}
+                                                    {% if inning.wide_runs != 0 %}
+                                                        <strong><span style="color:red">wide</span></strong>
+                                                    {% endif %}
+                                                    {% if inning.noball_runs != 0 %}
+                                                        <strong><span style="color:red">no ball</span></strong>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {{ inning.over| sub:1 }}.{{ inning.ball| sub:inning.ballIndex }}
+                                                {% endif %}
+                                            </td>
+                                            <td><p>{{inning.bowler }} to {{ inning.batsman }},
+                                            {% if inning.total_runs == 4 or inning.total_runs == 6%}
+                                            <strong><span style="color:red">{{ inning.total_runs }}</span></strong>
+                                            {% else %}
+                                            {{ inning.total_runs }}
+                                            {% endif %}
+                                                runs
+                                            </td>
+                                            <td>{% if inning.player_dismissed %}
+                                                <strong><span style="color:red"> OUT</span></strong>
+                                                {% endif %}
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                         <div id="two" class="tabcontent" style="display: none">
+                            <div class="container box">
+                               <table class = "table is-hoverable is-striped is-fullwidth">
+                                    <tbody>
+                                    {% for inning in inning2 %}
+                                        <tr>
+                                            <td>
+                                            {% if inning.wide_runs != 0 or inning.noball_runs != 0 %}
+                                                {% if inning.wide_runs != 0 %}
+                                                    <span style="color:red">wide</span>
+                                                {% endif %}
+                                                {% if inning.noball_runs != 0 %}
+                                                    <span style="color:red">no ball</span>
+                                                {% endif %}
+                                                {% else %}
+                                                    {{ inning.over|sub:1 }}.{{ inning.ball| sub:inning.ballIndex }}
+                                                {% endif %}
+                                            </td>
+                                            <td><p>{{inning.bowler }} to {{ inning.batsman }},
+                                            {% if inning.total_runs == 4 or inning.total_runs == 6%}
+                                            <strong><span style="color:red">{{ inning.total_runs }}</span></strong>
+                                            {% else %}
+                                            {{ inning.total_runs }}
+                                            {% endif %}
+                                                runs
+                                            </td>
+                                            <td>{% if inning.player_dismissed %}
+                                                <strong><span style="color:red"> OUT</span></strong>
+                                                {% endif %}
+                                            </td>
+
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+            </div>
+            <div class="tile is-parent is-vertical">
+                <center><p style="margin-bottom:0;color:white"><strong style="color:deepskyblue">{{ winner }}</strong> won by
+                                              <strong style="color:deepskyblue">
+                                                  {% if match.win_by_wickets > 0 %}
+                                                  {{ match.win_by_wickets }} wickets
+                                                  {% endif %}
+                                                  {% if match.win_by_runs > 0 %}
+                                                  {{ match.win_by_runs }} runs
+                                                  {% endif %}
+                                              </strong>
+                                          </p></center>
+                <div class="tile is-child box" style="background:black;padding-bottom:0px">
+                      <article class="media">
+                            <div class="media-content box">
+                                  <div class="content ">
+                                      <section class="section" style="padding-top:0px;padding-bottom:0px;">
+                                          <p style="margin-bottom:0;"><strong>{{ winner }}</strong> won the toss and chose to <strong>{{ match.toss_decision }}</strong></p>
+                                          <p style="margin-bottom:0;"><strong>Player of the match : </strong>{{ match.player_of_match }}</p>
+                                      </section>
+                                  </div>
+                            </div>
+                      </article>
+                      <br>
+                      <article>
+                          <div class="container">
+                                <center>
+                                  <strong style="color:white">TOP BATSMEN</strong>
+                                    <br>
+                                    <table class = "table is-hoverable is-striped is-fullwidth box">
+                                        <thead>
+                                        <tr>
+                                        <th>Batsman</th>
+                                        <th>Team</th>
+                                        <th>Runs</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for batsman in top3batsmen %}
+                                        <tr>
+                                            <td>{{ batsman.batsman }}</td>
+                                            <td>{{ batsman.batting_team }}</td>
+                                            <td>{{ batsman.total_runs }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </center>
+                            </div>
+                      </article>
+                      <br>
+                      <article>
+                          <div class="container">
+                                <center>
+                                  <strong style="color:white">TOP BOWLERS</strong>
+                                    <br>
+                                    <table class = "table is-hoverable is-fullwidth box"  >
+                                        <thead>
+                                        <tr>
+                                        <th>Bowler</th>
+                                        <th>Team</th>
+                                        <th>Wickets</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for bowler in top3bowlers %}
+                                        <tr>
+                                            <td>{{ bowler.bowler }}</td>
+                                            <td>{{ bowler.bowling_team }}</td>
+                                            <td>{{ bowler.total_wickets }}</td>
+                                        </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </center>
+                            </div>
+                      </article>
+                </div>
+
+            </div>
+
+</div>
+</div>
+{% endblock content %}

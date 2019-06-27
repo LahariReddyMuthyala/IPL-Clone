@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+ <center>
+     <br>
+     <h1>{{ team_name }}</h1>
+     <div class="is-fullwidth" style="background:black">
+         <br>
+         <div class="image is-128x128">
+             <img src="{{ team_logo.team_logo }}"/>
+         </div>
+         <br>
+     </div>
+     {% for season in team_seasons %}
+        <div class="box" style="width:70%">
+            <strong>{{ season.season }}</strong>
+        <table class = "table is-hoverable is-striped is-fullwidth">
+            <thead>
+                <tr>
+                    <th>Opponent</th>
+                    <th>Result</th>
+                    <th>Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in matches %}
+                {% if match.season == season.season %}
+                    <tr>
+                        {% if match.team1 != team_name %}
+                            <td>{{ match.team1 }}</td>
+                        {% else %}
+                            <td>{{ match.team2 }}</td>
+                        {% endif %}
+                        {% if match.winner == team_name %}
+                            <td>Won</td>
+                            <td>2</td>
+                        {% else %}
+                            <td>Lost</td>
+                            <td>0</td>
+                        {% endif %}
+                    </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+        </div>
+     {% endfor %}
+</center>
+<br>
+
+{% endblock content %}
